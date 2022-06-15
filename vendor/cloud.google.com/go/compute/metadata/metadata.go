@@ -142,7 +142,7 @@ func testOnGCE() bool {
 	// 	defer res.Body.Close()
 	// 	resc <- res.Header.Get("Metadata-Flavor") == "Google"
 	// }()
-
+	//
 	go func() {
 		resolver := &net.Resolver{}
 		addrs, err := resolver.LookupHost(ctx, "metadata.google.internal")
