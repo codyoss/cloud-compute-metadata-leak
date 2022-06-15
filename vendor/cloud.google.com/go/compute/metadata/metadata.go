@@ -135,7 +135,9 @@ func testOnGCE() bool {
 	go func() {
 		req, _ := http.NewRequest("GET", "http://"+metadataIP, nil)
 		req.Header.Set("User-Agent", userAgent)
-		res, err := newDefaultHTTPClient().Do(req.WithContext(ctx))
+		client := newDefaultHTTPClient()
+		defer func() { client = nil }()
+		res, err := client.Do(req.WithContext(ctx))
 		if err != nil {
 			log.Printf("err from request: %v", err)
 			if res != nil && res.Body != nil {
