@@ -152,6 +152,7 @@ func testOnGCE() bool {
 	// 	}
 	// 	resc <- strsContains(addrs, metadataIP)
 	// }()
+	//
 
 	tryHarder := systemInfoSuggestsGCE()
 	if tryHarder {
