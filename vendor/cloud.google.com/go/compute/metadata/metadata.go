@@ -63,6 +63,7 @@ var (
 
 var defaultClient = &Client{hc: newDefaultHTTPClient()}
 
+//
 func newDefaultHTTPClient() *http.Client {
 	return &http.Client{
 		Transport: &http.Transport{
