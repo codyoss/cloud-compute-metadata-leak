@@ -67,9 +67,9 @@ func newDefaultHTTPClient() *http.Client {
 	return &http.Client{
 		Transport: &http.Transport{
 			Dial: (&net.Dialer{
-				Timeout:   2 * time.Second,
-				KeepAlive: 30 * time.Second,
+				Timeout: 2 * time.Second,
 			}).Dial,
+			DisableKeepAlives: true,
 		},
 	}
 }
@@ -131,18 +131,18 @@ func testOnGCE() bool {
 
 	// Try two strategies in parallel.
 	// See https://github.com/googleapis/google-cloud-go/issues/194
-	// go func() {
-	// 	req, _ := http.NewRequest("GET", "http://"+metadataIP, nil)
-	// 	req.Header.Set("User-Agent", userAgent)
-	// 	res, err := newDefaultHTTPClient().Do(req.WithContext(ctx))
-	// 	if err != nil {
-	// 		resc <- false
-	// 		return
-	// 	}
-	// 	defer res.Body.Close()
-	// 	resc <- res.Header.Get("Metadata-Flavor") == "Google"
-	// }()
-	//
+	go func() {
+		req, _ := http.NewRequest("GET", "http://"+metadataIP, nil)
+		req.Header.Set("User-Agent", userAgent)
+		res, err := newDefaultHTTPClient().Do(req.WithContext(ctx))
+		if err != nil {
+			resc <- false
+			return
+		}
+		defer res.Body.Close()
+		resc <- res.Header.Get("Metadata-Flavor") == "Google"
+	}()
+
 	go func() {
 		resolver := &net.Resolver{}
 		addrs, err := resolver.LookupHost(ctx, "metadata.google.internal")
