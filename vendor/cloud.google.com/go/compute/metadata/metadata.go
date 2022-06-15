@@ -136,6 +136,9 @@ func testOnGCE() bool {
 		req.Header.Set("User-Agent", userAgent)
 		res, err := newDefaultHTTPClient().Do(req.WithContext(ctx))
 		if err != nil {
+			if res != nil && res.Body != nil {
+				res.Body.Close()
+			}
 			resc <- false
 			return
 		}
