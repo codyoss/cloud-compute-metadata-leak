@@ -24,6 +24,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net"
 	"net/http"
 	"net/url"
@@ -136,8 +137,10 @@ func testOnGCE() bool {
 		req.Header.Set("User-Agent", userAgent)
 		res, err := newDefaultHTTPClient().Do(req.WithContext(ctx))
 		if err != nil {
+			log.Printf("err from request: %v", err)
 			if res != nil && res.Body != nil {
 				res.Body.Close()
+				panic("non-nil body!!!!!")
 			}
 			resc <- false
 			return
@@ -150,6 +153,7 @@ func testOnGCE() bool {
 		resolver := &net.Resolver{}
 		addrs, err := resolver.LookupHost(ctx, "metadata.google.internal")
 		if err != nil || len(addrs) == 0 {
+			log.Printf("err from resolver: %v", err)
 			resc <- false
 			return
 		}
