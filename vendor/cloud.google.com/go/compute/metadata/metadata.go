@@ -139,7 +139,6 @@ func testOnGCE() bool {
 		if err != nil {
 			log.Printf("err from request: %v", err)
 			if res != nil && res.Body != nil {
-				res.Body.Close()
 				panic("non-nil body!!!!!")
 			}
 			resc <- false
