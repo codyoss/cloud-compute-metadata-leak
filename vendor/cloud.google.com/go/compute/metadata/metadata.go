@@ -63,14 +63,13 @@ var (
 
 var defaultClient = &Client{hc: newDefaultHTTPClient()}
 
-//
 func newDefaultHTTPClient() *http.Client {
 	return &http.Client{
 		Transport: &http.Transport{
 			Dial: (&net.Dialer{
-				Timeout: 2 * time.Second,
+				Timeout:   2 * time.Second,
+				KeepAlive: 30 * time.Second,
 			}).Dial,
-			DisableKeepAlives: true,
 		},
 	}
 }
