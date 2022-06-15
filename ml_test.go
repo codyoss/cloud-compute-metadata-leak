@@ -13,5 +13,5 @@ func TestML(t *testing.T) {
 
 	defer leakcheck.Check(t)
 
-	time.Sleep(1 * time.Second)
+	time.Sleep(2 * time.Second)
 }
