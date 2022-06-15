@@ -131,28 +131,27 @@ func testOnGCE() bool {
 
 	// Try two strategies in parallel.
 	// See https://github.com/googleapis/google-cloud-go/issues/194
-	go func() {
-		req, _ := http.NewRequest("GET", "http://"+metadataIP, nil)
-		req.Header.Set("User-Agent", userAgent)
-		res, err := newDefaultHTTPClient().Do(req.WithContext(ctx))
-		if err != nil {
-			resc <- false
-			return
-		}
-		defer res.Body.Close()
-		resc <- res.Header.Get("Metadata-Flavor") == "Google"
-	}()
-
 	// go func() {
-	// 	resolver := &net.Resolver{}
-	// 	addrs, err := resolver.LookupHost(ctx, "metadata.google.internal")
-	// 	if err != nil || len(addrs) == 0 {
+	// 	req, _ := http.NewRequest("GET", "http://"+metadataIP, nil)
+	// 	req.Header.Set("User-Agent", userAgent)
+	// 	res, err := newDefaultHTTPClient().Do(req.WithContext(ctx))
+	// 	if err != nil {
 	// 		resc <- false
 	// 		return
 	// 	}
-	// 	resc <- strsContains(addrs, metadataIP)
+	// 	defer res.Body.Close()
+	// 	resc <- res.Header.Get("Metadata-Flavor") == "Google"
 	// }()
-	//
+
+	go func() {
+		resolver := &net.Resolver{}
+		addrs, err := resolver.LookupHost(ctx, "metadata.google.internal")
+		if err != nil || len(addrs) == 0 {
+			resc <- false
+			return
+		}
+		resc <- strsContains(addrs, metadataIP)
+	}()
 
 	tryHarder := systemInfoSuggestsGCE()
 	if tryHarder {
